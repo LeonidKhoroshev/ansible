@@ -1,0 +1,19 @@
+---
+  - name: Install apache2
+    become: true
+    package:
+      name: httpd
+      state: present
+  - name: "index.html"
+    become: true
+    template:
+      src: templates/indexhtml.j2
+      dest: /var/www/html/index.html
+  - name: "start apache2"
+    systemd:
+      name: httpd
+      enabled: true
+      masked: no
+  - name: check that you can connect (GET) to a page and it returns a status 200
+    uri:
+      url: http://{{ ansible_facts.default_ipv4.address }}
